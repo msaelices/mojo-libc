@@ -3,6 +3,7 @@
 # not included here due to their complexity and potential side effects.
 
 from memory import UnsafePointer
+from utils import StringRef
 from testing import assert_equal, assert_not_equal, assert_raises
 from pathlib import Path, _dir_of_current_file
 
@@ -131,7 +132,7 @@ fn test_inet_addr_ntoa() raises:
     in_addr_struct.s_addr = addr
 
     var addr_str_ptr = inet_ntoa(in_addr_struct)
-    var addr_str = String(addr_str_ptr)
+    var addr_str = StringRef(ptr=addr_str_ptr)
     assert_equal(addr_str, ip_str, "inet_ntoa failed to convert address back")
 
 
