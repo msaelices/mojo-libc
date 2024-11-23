@@ -1,4 +1,3 @@
-from builtin.builtin_list import _LITRefPackHelper
 from memory import memcpy, Pointer, UnsafePointer
 from sys.ffi import (
     c_char,
@@ -818,7 +817,7 @@ fn printf[*T: AnyType](format: UnsafePointer[c_char], *args: *T) -> c_int:
         args: The optional arguments.
     Returns: The number of bytes written or -1 in case of failure.
     """
-    var loaded_pack = _LITRefPackHelper(args._value).get_loaded_kgen_pack()
+    var loaded_pack = args.get_loaded_kgen_pack()
 
     return __mlir_op.`pop.external_call`[
         func = "printf".value,
