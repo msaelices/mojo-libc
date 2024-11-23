@@ -24,7 +24,7 @@ alias FD_STDERR: FD = 2
 alias SUCCESS = 0
 alias GRND_NONBLOCK: UInt8 = 1
 
-alias char_UnsafePointer = UnsafePointer[c_char]
+alias char_UnsafePointer = UnsafePointer[c_char, alignment=1]
 
 # Adapted from https://github.com/crisadamo/mojo-Libc . Huge thanks to Cristian!
 # C types
@@ -343,7 +343,7 @@ struct addrinfo:
     var ai_protocol: c_int
     var ai_addrlen: socklen_t
     var ai_addr: UnsafePointer[sockaddr]
-    var ai_canonname: UnsafePointer[c_char]
+    var ai_canonname: char_UnsafePointer
     var ai_next: UnsafePointer[c_void]
 
     fn __init__(inout self) -> None:
@@ -353,11 +353,11 @@ struct addrinfo:
         self.ai_protocol = 0
         self.ai_addrlen = 0
         self.ai_addr = UnsafePointer[sockaddr]()
-        self.ai_canonname = UnsafePointer[c_char]()
+        self.ai_canonname = char_UnsafePointer()
         self.ai_next = UnsafePointer[c_void]()
 
 
-fn strlen(s: UnsafePointer[c_char]) -> c_size_t:
+fn strlen(s: char_UnsafePointer) -> c_size_t:
     """Libc POSIX `strlen` function
     Reference: https://man7.org/linux/man-pages/man3/strlen.3p.html
     Fn signature: size_t strlen(const char *s).
@@ -365,7 +365,7 @@ fn strlen(s: UnsafePointer[c_char]) -> c_size_t:
     Args: s: A UnsafePointer to a C string.
     Returns: The length of the string.
     """
-    return external_call["strlen", c_size_t, UnsafePointer[c_char]](s)
+    return external_call["strlen", c_size_t, char_UnsafePointer](s)
 
 
 # --- ( Network Related Syscalls & Structs )------------------------------------
@@ -418,9 +418,9 @@ fn ntohs(netshort: c_ushort) -> c_ushort:
 fn inet_ntop(
     af: c_int,
     src: UnsafePointer[c_void],
-    dst: UnsafePointer[c_char],
+    dst: char_UnsafePointer,
     size: socklen_t,
-) -> UnsafePointer[c_char]:
+) -> char_UnsafePointer:
     """Libc POSIX `inet_ntop` function
     Reference: https://man7.org/linux/man-pages/man3/inet_ntop.3p.html.
     Fn signature: const char *inet_ntop(int af, const void *restrict src, char *restrict dst, socklen_t size).
@@ -436,17 +436,15 @@ fn inet_ntop(
     """
     return external_call[
         "inet_ntop",
-        UnsafePointer[c_char],  # FnName, RetType
+        char_UnsafePointer,  # FnName, RetType
         c_int,
         UnsafePointer[c_void],
-        UnsafePointer[c_char],
+        char_UnsafePointer,
         socklen_t,  # Args
     ](af, src, dst, size)
 
 
-fn inet_pton(
-    af: c_int, src: UnsafePointer[c_char], dst: UnsafePointer[c_void]
-) -> c_int:
+fn inet_pton(af: c_int, src: char_UnsafePointer, dst: UnsafePointer[c_void]) -> c_int:
     """Libc POSIX `inet_pton` function
     Reference: https://man7.org/linux/man-pages/man3/inet_ntop.3p.html
     Fn signature: int inet_pton(int af, const char *restrict src, void *restrict dst).
@@ -460,12 +458,12 @@ fn inet_pton(
         "inet_pton",
         c_int,
         c_int,
-        UnsafePointer[c_char],
+        char_UnsafePointer,
         UnsafePointer[c_void],
     ](af, src, dst)
 
 
-fn inet_addr(cp: UnsafePointer[c_char]) -> in_addr_t:
+fn inet_addr(cp: char_UnsafePointer) -> in_addr_t:
     """Libc POSIX `inet_addr` function
     Reference: https://man7.org/linux/man-pages/man3/inet_addr.3p.html
     Fn signature: in_addr_t inet_addr(const char *cp).
@@ -473,10 +471,10 @@ fn inet_addr(cp: UnsafePointer[c_char]) -> in_addr_t:
     Args: cp: A UnsafePointer to a string containing the address.
     Returns: The address in network byte order.
     """
-    return external_call["inet_addr", in_addr_t, UnsafePointer[c_char]](cp)
+    return external_call["inet_addr", in_addr_t, char_UnsafePointer](cp)
 
 
-fn inet_ntoa(addr: in_addr) -> UnsafePointer[c_char]:
+fn inet_ntoa(addr: in_addr) -> char_UnsafePointer:
     """Libc POSIX `inet_ntoa` function
     Reference: https://man7.org/linux/man-pages/man3/inet_addr.3p.html
     Fn signature: char *inet_ntoa(struct in_addr in).
@@ -484,7 +482,7 @@ fn inet_ntoa(addr: in_addr) -> UnsafePointer[c_char]:
     Args: in: A UnsafePointer to a string containing the address.
     Returns: The address in network byte order.
     """
-    return external_call["inet_ntoa", UnsafePointer[c_char], in_addr](addr)
+    return external_call["inet_ntoa", char_UnsafePointer, in_addr](addr)
 
 
 fn socket(domain: c_int, type: c_int, protocol: c_int) -> FD:
@@ -730,8 +728,8 @@ fn shutdown(socket: FD, how: c_int) -> c_int:
 
 
 fn getaddrinfo(
-    nodename: UnsafePointer[c_char],
-    servname: UnsafePointer[c_char],
+    nodename: char_UnsafePointer,
+    servname: char_UnsafePointer,
     hints: UnsafePointer[addrinfo],
     res: UnsafePointer[UnsafePointer[addrinfo]],
 ) -> c_int:
@@ -742,14 +740,14 @@ fn getaddrinfo(
     return external_call[
         "getaddrinfo",
         c_int,  # FnName, RetType
-        UnsafePointer[c_char],
-        UnsafePointer[c_char],
+        char_UnsafePointer,
+        char_UnsafePointer,
         UnsafePointer[addrinfo],  # Args
         UnsafePointer[UnsafePointer[addrinfo]],  # Args
     ](nodename, servname, hints, res)
 
 
-fn gai_strerror(ecode: c_int) -> UnsafePointer[c_char]:
+fn gai_strerror(ecode: c_int) -> char_UnsafePointer:
     """Libc POSIX `gai_strerror` function
     Reference: https://man7.org/linux/man-pages/man3/gai_strerror.3p.html
     Fn signature: const char *gai_strerror(int ecode).
@@ -758,7 +756,7 @@ fn gai_strerror(ecode: c_int) -> UnsafePointer[c_char]:
     Returns: A UnsafePointer to a string describing the error.
     """
     return external_call[
-        "gai_strerror", UnsafePointer[c_char], c_int  # FnName, RetType  # Args
+        "gai_strerror", char_UnsafePointer, c_int  # FnName, RetType  # Args
     ](ecode)
 
 
@@ -793,7 +791,7 @@ fn close(fildes: FD) -> c_int:
     return external_call["close", c_int, c_int](fildes)
 
 
-fn open[*T: AnyType](path: UnsafePointer[c_char], oflag: c_int, *args: *T) -> c_int:
+fn open[*T: AnyType](path: char_UnsafePointer, oflag: c_int, *args: *T) -> c_int:
     """Libc POSIX `open` function
     Reference: https://man7.org/linux/man-pages/man3/open.3p.html
     Fn signature: int open(const char *path, int oflag, ...).
@@ -808,7 +806,7 @@ fn open[*T: AnyType](path: UnsafePointer[c_char], oflag: c_int, *args: *T) -> c_
     return external_call["open", c_int](path, oflag, args)
 
 
-fn printf[*T: AnyType](format: UnsafePointer[c_char], *args: *T) -> c_int:
+fn printf[*T: AnyType](format: char_UnsafePointer, *args: *T) -> c_int:
     """Libc POSIX `printf` function
     Reference: https://man7.org/linux/man-pages/man3/fprintf.3p.html
     Fn signature: int printf(const char *restrict format, ...).
