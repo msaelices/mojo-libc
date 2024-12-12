@@ -346,7 +346,7 @@ struct addrinfo:
     var ai_canonname: char_UnsafePointer
     var ai_next: UnsafePointer[c_void]
 
-    fn __init__(inout self) -> None:
+    fn __init__(out self):
         self.ai_flags = 0
         self.ai_family = 0
         self.ai_socktype = 0
@@ -863,7 +863,7 @@ struct timeval:
     var tv_sec: Int64
     var tv_usec: Int64
 
-    fn __init__(inout self, seconds: Int64, microseconds: Int64):
+    fn __init__(out self, seconds: Int64, microseconds: Int64):
         self.tv_sec = seconds
         self.tv_usec = microseconds
 
@@ -872,17 +872,17 @@ struct timeval:
 struct fd_set:
     var fds_bits: StaticTuple[Int64, 16]
 
-    fn __init__(inout self):
+    fn __init__(out self):
         self.fds_bits = StaticTuple[Int64, 16]()
         for i in range(16):
             self.fds_bits[i] = 0
 
-    fn set(inout self, fd: FD):
+    fn set(mut self, fd: FD):
         var word = int(fd // 64)
         var bit = int(fd % 64)
         self.fds_bits[word] |= 1 << bit
 
-    fn clear(inout self, fd: FD):
+    fn clear(mut self, fd: FD):
         var word = int(fd // 64)
         var bit = int(fd % 64)
         self.fds_bits[word] &= ~(1 << bit)
@@ -893,7 +893,7 @@ struct fd_set:
         var result = (self.fds_bits[word] & (1 << bit)) != 0
         return result
 
-    fn clear_all(inout self):
+    fn clear_all(mut self):
         for i in range(16):
             self.fds_bits[i] = 0
 
