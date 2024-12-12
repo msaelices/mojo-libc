@@ -1,5 +1,7 @@
 # Mojo's libc support
 
+`mojo-libc` is a library that provides access to the C standard library functions in Mojo.
+
 ## Getting Started
 
 The only dependency for `libc` is Mojo.
