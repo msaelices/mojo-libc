@@ -11,4 +11,4 @@ build = { cmd = "rattler-build build --recipe recipes -c https://conda.modular.c
 publish = { cmd = "bash scripts/publish.sh", env = { PREFIX_API_KEY = "$PREFIX_API_KEY" } }
 
 [dependencies]
-max = "*"
+max = ">=25.1.0.dev2025011705"

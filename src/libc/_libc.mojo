@@ -767,7 +767,7 @@ fn inet_pton(address_family: Int, address: String) -> Int:
 
     var ip_buf = UnsafePointer[c_void].alloc(ip_buf_size)
     _ = inet_pton(address_family, address.unsafe_cstr_ptr(), ip_buf)
-    return int(ip_buf.bitcast[in_addr]()[].s_addr)
+    return Int(ip_buf.bitcast[in_addr]()[].s_addr)
 
 
 # --- ( File Related Syscalls & Structs )---------------------------------------
@@ -878,13 +878,13 @@ struct fd_set:
             self.fds_bits[i] = 0
 
     fn set(mut self, fd: FD):
-        var word = int(fd // 64)
-        var bit = int(fd % 64)
+        var word = Int(fd // 64)
+        var bit = Int(fd % 64)
         self.fds_bits[word] |= 1 << bit
 
     fn clear(mut self, fd: FD):
-        var word = int(fd // 64)
-        var bit = int(fd % 64)
+        var word = Int(fd // 64)
+        var bit = Int(fd % 64)
         self.fds_bits[word] &= ~(1 << bit)
 
     fn is_set(self, fd: Int) -> Bool:

@@ -116,9 +116,9 @@ fn test_inet_ntop_pton() raises:
 
     var buffer = UnsafePointer[c_char]().alloc(INET_ADDRSTRLEN)
     var result = inet_ntop(AF_INET, addr, buffer, INET_ADDRSTRLEN)
-    var converted_ip_str = String(buffer)
+    var converted_ip_str = StringRef(ptr=buffer)
     assert_equal(
-        converted_ip_str, ip_str, "inet_ntop failed to convert IP address back"
+        String(converted_ip_str), ip_str, "inet_ntop failed to convert IP address back"
     )
 
 
@@ -133,7 +133,7 @@ fn test_inet_addr_ntoa() raises:
 
     var addr_str_ptr = inet_ntoa(in_addr_struct)
     var addr_str = StringRef(ptr=addr_str_ptr)
-    assert_equal(addr_str, ip_str, "inet_ntoa failed to convert address back")
+    assert_equal(String(addr_str), ip_str, "inet_ntoa failed to convert address back")
 
 
 fn test_socket_close() raises:
