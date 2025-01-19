@@ -13,7 +13,7 @@ Once you have created a Mojo project using the `magic` tool,
 1. Add the `mojo-community` channel to your `mojoproject.toml`, e.g:
    ```toml
    [project]
-   channels = ["conda-forge", "https://conda.modular.com/max-nightly", "https://repo.prefix.dev/mojo-community"]
+   channels = ["conda-forge", "https://conda.modular.com/max-nightly", "https://repo.prefix.dev/mojo-community-nightly"]
    ```
 2. Add `libc` as a dependency:
    ```toml
