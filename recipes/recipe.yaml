@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
 
 context:
-  version: "0.1.11"
+  version: "0.1.12"
 
 package:
   name: "libc"
-  version: 0.1.11
+  version: 0.1.12
 
 source:
   - path: ../src
@@ -18,7 +18,7 @@ build:
 
 requirements:
   run:
-    - max >=24.5.0
+    - max ==25.1.0.dev2025011705
 
 about:
   homepage: https://github.com/msaelices/mojo-libc
