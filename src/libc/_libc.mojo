@@ -314,6 +314,14 @@ struct sockaddr:
     var sa_family: sa_family_t
     var sa_data: StaticTuple[c_char, 14]
 
+    fn __init__(
+        out self,
+        family: sa_family_t = 0,
+        data: StaticTuple[c_char, 14] = StaticTuple[c_char, 14](),
+    ):
+        self.sa_family = family
+        self.sa_data = data
+
 
 @value
 @register_passable("trivial")
