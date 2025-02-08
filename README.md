@@ -1,5 +1,7 @@
 # Mojo's libc support
 
+![logo](./assets/logo.jpeg)
+
 `mojo-libc` is a library that provides access to the C standard library functions in Mojo.
 
 ## Getting Started
