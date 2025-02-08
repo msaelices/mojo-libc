@@ -10,17 +10,22 @@ You can install Mojo following the instructions from the [Modular website](https
 
 Once you have created a Mojo project using the `magic` tool,
 
-1. Add the `mojo-community` channel to your `mojoproject.toml`, e.g:
-   ```toml
-   [project]
-   channels = ["conda-forge", "https://conda.modular.com/max-nightly", "https://repo.prefix.dev/mojo-community-nightly"]
-   ```
-2. Add `libc` as a dependency:
+### If you are using the magic CLI
+
+Install the `libc` library by running the following command:
+
+```bash
+magic add libc
+```
+
+### If you have a Mojo project with a `toml` file
+
+1. Add the `libc` dependency to your `toml` file, e.g:
    ```toml
    [dependencies]
-   libc = ">=0.1.12"
+   libc = ">=0.1.13"
    ```
-3. Run `magic install` at the root of your project, where `mojoproject.toml` is located
+3. Run `magic install` at the root of your project, where the `toml` file is located
 4. `libc` should now be installed as a dependency. You can import libc functions from the library, e.g:
     ```mojo
     from libc import socket
@@ -35,6 +40,7 @@ See the examples in [examples/sockets/](examples/sockets/) directory.
 ### Basic file system operations
 
 See the examples in [examples/files/](examples/files/) directory.
+
 ## Building the project
 
 To build the project, execute the following command:
